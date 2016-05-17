@@ -61,14 +61,7 @@ public class ListadoClientes extends AppCompatActivity {
                 startActivity(intento);
             }
         });
-
-        /*
-        Codigo para obtenrer los datos de la DB
-         */
-        mDataSourceListaClientes = new DataSourceListaClientes(this);
-        mDataSourceListaClientes.abrir();
-
-        mClientes = mDataSourceListaClientes.verListadoClientes();
+        refrescarPantalla();
 
 
         // Obtener el Recycler
@@ -104,5 +97,32 @@ public class ListadoClientes extends AppCompatActivity {
                     }
                 })
         );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refrescarPantalla();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        refrescarPantalla();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDataSourceListaClientes.cerrar();
+    }
+
+    private void refrescarPantalla() {
+    /*
+    Codigo para obtenrer los datos de la DB
+     */
+        mDataSourceListaClientes = new DataSourceListaClientes(this);
+        mDataSourceListaClientes.abrir();
+        mClientes = mDataSourceListaClientes.verListadoClientes();
     }
 }

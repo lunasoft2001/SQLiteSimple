@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -115,6 +116,13 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         mDataSourceListaClientes.eliminarCliente(idActual);
 
         Toast.makeText(this,"El registro " + idActual + " ha sido eliminado", Toast.LENGTH_LONG).show();
+
+        Intent a = new Intent(this, ListadoClientes.class);
+        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(a);
+
+
+
         finish();
 
     }
@@ -131,6 +139,11 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         mDataSourceListaClientes.actualizarCliente(idActual,nombreTxt,direccionTxt,telefonoTxt);
 
         Toast.makeText(this,"El registro " + idActual + " ha sido actiualizado", Toast.LENGTH_LONG).show();
+
+        Intent a = new Intent(this, ListadoClientes.class);
+        a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(a);
+
         finish();
 
 //        //metodo Update
@@ -152,5 +165,18 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            Intent a = new Intent(this, ListadoClientes.class);
+            a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(a);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }
