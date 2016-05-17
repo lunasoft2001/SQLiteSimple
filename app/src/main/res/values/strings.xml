@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SQLite Simple</string>
+    <string name="title_activity_listado_clientes">ListadoClientes</string>
+</resources>
