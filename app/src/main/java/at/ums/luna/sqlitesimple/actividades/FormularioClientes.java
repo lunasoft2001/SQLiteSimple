@@ -32,7 +32,7 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
     private EditText direccion;
     private EditText telefono;
 
-    private Spinner prove;
+    private Spinner spinner;
 
 
     @Override
@@ -46,6 +46,7 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         nombre = (EditText) findViewById(R.id.etNombre);
         direccion = (EditText) findViewById(R.id.etDireccion);
         telefono = (EditText) findViewById(R.id.etTelefono);
+
 
 
         //Rellenamos los campos
@@ -72,7 +73,7 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         /**
          * Spinner
          */
-        Spinner spinner = (Spinner) findViewById(R.id.spinnerProveeedor);
+        spinner = (Spinner) findViewById(R.id.spinnerProveeedor);
         SimpleCursorAdapter adaptador = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_dropdown_item, mDataSourceListadoProveedores.verListadoProveedores(),
             new String[]{DBHelper.ColProveedores.NOMBRE},
             new int[]{android.R.id.text1},
@@ -159,11 +160,13 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
-        Toast.makeText(parent.getContext(),item,Toast.LENGTH_LONG).show();
+        nombre.setText(item);
+
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+        nombre.setText("");
 
     }
 
