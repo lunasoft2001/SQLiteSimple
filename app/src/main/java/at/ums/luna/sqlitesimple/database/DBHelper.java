@@ -38,4 +38,6 @@ public class DBHelper extends SQLiteAssetHelper{
         String NOMBRE = "nombre";
     }
 
+
+
 }

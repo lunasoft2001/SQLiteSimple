@@ -1,6 +1,5 @@
 package at.ums.luna.sqlitesimple.actividades;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -8,17 +7,18 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import at.ums.luna.sqlitesimple.R;
-import at.ums.luna.sqlitesimple.database.DBHelper;
+import at.ums.luna.sqlitesimple.adaptadores.ProveedoresSpinnerAdapter;
 import at.ums.luna.sqlitesimple.database.DataSourceListaClientes;
 import at.ums.luna.sqlitesimple.database.DataSourceListadoProveedores;
-import at.ums.luna.sqlitesimple.modelos.Clientes;
 import at.ums.luna.sqlitesimple.modelos.Proveedores;
 
 public class FormularioClientes extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
@@ -35,6 +35,7 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
     private Spinner spinner;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,11 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         nombre = (EditText) findViewById(R.id.etNombre);
         direccion = (EditText) findViewById(R.id.etDireccion);
         telefono = (EditText) findViewById(R.id.etTelefono);
+
+        spinner = (Spinner) findViewById(R.id.spinnerProveeedor);
+
+
+        spinner.setOnItemSelectedListener(this);
 
 
 
@@ -70,21 +76,10 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         mDataSourceListaClientes.abrir();
         mDataSourceListadoProveedores.abrir();
 
-        /**
-         * Spinner
-         */
-        spinner = (Spinner) findViewById(R.id.spinnerProveeedor);
-        SimpleCursorAdapter adaptador = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_dropdown_item, mDataSourceListadoProveedores.verListadoProveedores(),
-            new String[]{DBHelper.ColProveedores.NOMBRE},
-            new int[]{android.R.id.text1},
-            SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
-        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(adaptador);
-
-        spinner.setOnItemSelectedListener(this);
-
+//        cargaSpinnerSimple();
+        cargaSpinner();
 
         //Codigo para el onClickListener
         findViewById(R.id.btCancelar).setOnClickListener(mGlobal_onClickListener);
@@ -136,39 +131,87 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         String telefonoTxt = telefono.getText().toString();
 
 
+        mDataSourceListaClientes.actualizarCliente(idActual, nombreTxt, direccionTxt, telefonoTxt);
 
-        mDataSourceListaClientes.actualizarCliente(idActual,nombreTxt,direccionTxt,telefonoTxt);
-
-        Toast.makeText(this,"El registro " + idActual + " ha sido actiualizado", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "El registro " + idActual + " ha sido actiualizado", Toast.LENGTH_LONG).show();
 
         Intent a = new Intent(this, ListadoClientes.class);
         a.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(a);
 
         finish();
+    }
 
-//        //metodo Update
-//        ContentValues actualizar = new ContentValues();
-//        actualizar.put(DBHelper.ColClientes.NOMBRE, nombreTxt);
-//        actualizar.put(DBHelper.ColClientes.DIRECCION, direccionTxt);
-//        actualizar.put(DBHelper.ColClientes.TELEFONO,telefonoTxt);
-//
-//        db.update(DBHelper.Tablas.CLIENTES, actualizar, DBHelper.ColClientes.ID +"="+idActual, null);
+
+
+    private void cargaSpinner(){
+        ProveedoresSpinnerAdapter proveedorAdapter;
+        DataSourceListadoProveedores db = new DataSourceListadoProveedores(getApplicationContext());
+        List<Proveedores> proveedores = db.getAll();
+        proveedorAdapter = new ProveedoresSpinnerAdapter(FormularioClientes.this,
+                android.R.layout.simple_spinner_item, proveedores);
+        spinner.setAdapter(proveedorAdapter);
+
+        proveedorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                Proveedores selected = (Proveedores) parent.getItemAtPosition(position);
+                String item = selected.getNombre();
+
+                Toast.makeText(FormularioClientes.this,item,Toast.LENGTH_LONG).show();
+                nombre.setText(item);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString();
-        nombre.setText(item);
 
+    private void cargaSpinnerSimple(){
+        ArrayAdapter<String> spinnerAdapter;
+        DataSourceListadoProveedores db = new DataSourceListadoProveedores(getApplicationContext());
+        List<String> proveedores = db.getAll_Simple();
+        spinnerAdapter = new ArrayAdapter<String>(FormularioClientes.this, android.R.layout.simple_spinner_item,proveedores);
+        spinner.setAdapter(spinnerAdapter);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+//                Proveedores selected = (Proveedores) parent.getItemAtPosition(position);
+//                String item = selected.getNombre();
+
+                String item = (String) ((TextView) view).getText();
+
+
+
+                Toast.makeText(FormularioClientes.this,item,Toast.LENGTH_LONG).show();
+                nombre.setText(item);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        nombre.setText("");
 
-    }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -181,5 +224,21 @@ public class FormularioClientes extends AppCompatActivity implements AdapterView
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Proveedores selected = (Proveedores) parent.getItemAtPosition(position);
+        String item = selected.getNombre();
+
+        Toast.makeText(FormularioClientes.this, item, Toast.LENGTH_LONG).show();
+        nombre.setText(item);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        nombre.setText( "");
+        direccion.setText( "");
     }
 }

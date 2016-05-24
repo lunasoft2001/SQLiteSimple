@@ -6,14 +6,14 @@ package at.ums.luna.sqlitesimple.modelos;
 public class Proveedores {
     private int idProveedor;
     private String nombre;
-
-    public Proveedores(int idCliente, String nombre, String direccion, String telefono){
-        this.idProveedor = idCliente;
-        this.nombre = nombre;
-    }
-
-    public Proveedores(){
-    }
+//
+//    public Proveedores(int idProveedor, String nombre){
+//        this.idProveedor = idProveedor;
+//        this.nombre = nombre;
+//    }
+//
+//    public Proveedores(){
+//    }
 
     public int getIdProveedor() {
         return idProveedor;
